@@ -1,7 +1,6 @@
-import React from 'react';
-import { ColorPicker, useColor, toColor, Color } from 'react-color-palette'
+import React, { useEffect } from 'react';
+import { ColorPicker, useColor, Color } from 'react-color-palette'
 import { Device } from './DevicePicker';
-import {constants} from "os";
 
 interface Props {
   currentDevice: Device;
@@ -10,6 +9,10 @@ interface Props {
 
 export default function Picker(props: Props) {
   const [color, setColor] = useColor('hsv', props.initialColor.hsv);
+
+  useEffect(() => {
+    setColor(props.initialColor);
+  }, [props.initialColor]);
 
   function updateLights(color: Color) {
     const hsv = color.hsv;

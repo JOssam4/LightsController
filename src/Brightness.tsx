@@ -19,6 +19,12 @@ export default function Brightness(props: Props) {
     brightness: props.initialBrightness,
   });
 
+  useEffect(() => {
+    setState({
+      brightness: props.initialBrightness
+    });
+  }, [props]);
+
   function changeHandler(event: Event, newVal: number | number[]) {
     const brightness = (typeof newVal === "number") ? newVal : newVal[newVal.length - 1];
     setState({ brightness });
@@ -45,11 +51,12 @@ export default function Brightness(props: Props) {
       <div id="slider">
         <Stack spacing={2} direction="row" alignItems="center">
           <BrightnessLow/>
-          <Slider defaultValue={state.brightness}
+          <Slider value={state.brightness}
                   aria-label="Brightness Slider"
                   min={1} max={100}
                   valueLabelDisplay="on"
-                  onChange={(event, newVal: number | number[]) => changeHandler(event, newVal)}/>
+                  onChange={(event, newVal: number | number[]) => changeHandler(event, newVal)}
+          />
           <BrightnessHigh/>
         </Stack>
       </div>

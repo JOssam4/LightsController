@@ -1,16 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {Color, toColor} from 'react-color-palette';
+import React, {useState} from 'react';
 import "react-color-palette/lib/css/styles.css";
 import './App.css';
+import Controller from './Controller';
 import DevicePicker, {Device} from './DevicePicker';
-import Picker from './Picker';
-import Brightness from './Brightness';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSpinner} from '@fortawesome/free-solid-svg-icons';
 
 interface InitialResponse {
   color: ColorResponse;
   brightness: number;
+  toggleStatus: boolean;
 }
 
 interface ColorResponse {
@@ -21,84 +20,45 @@ interface ColorResponse {
 
 interface State {
   currentDevice: Device;
-  livingroomColor: Color | null;
-  livingroomBrightness: number | null;
-  bedroomColor: Color | null;
-  bedroomBrightness: number | null;
 }
 
 
 function App() {
   const [state, setState] = useState<State>({
     currentDevice: Device.COMPUTER,
-    livingroomColor: null,
-    livingroomBrightness: null,
-    bedroomColor: null,
-    bedroomBrightness: null,
   });
-
-  useEffect(() => {
-    console.log('ran useeffect');
-    fetch(`http://localhost:3001/initial?device=${state.currentDevice}`)
-      .then((resp) => resp.json())
-      .then((initialResponse: InitialResponse) => {
-        const { color, brightness } = initialResponse;
-        if (state.currentDevice === Device.BEDROOM) {
-          setState({ ...state, bedroomBrightness: brightness, bedroomColor: toColor('hsv', color) });
-        } else {
-          setState({ ...state, livingroomBrightness: brightness, livingroomColor: toColor('hsv', color) });
-        }
-      })
-    }, []);
-
-  useEffect(() => {
-    /*
-    fetch(`http://localhost:3001/color?device=${state.currentDevice}`)
-      .then((resp) => resp.json())
-      .then((currentColor: ColorResponse) => {
-        const {h, s, v} = currentColor;
-        if (state.currentDevice === Device.BEDROOM) {
-          console.log('setting state: ');
-          console.dir({h, s, v});
-          setState({...state, bedroomColor: toColor('hsv', {h, s, v})});
-        } else {
-          setState( { ...state, livingroomColor: toColor('hsv', {h, s, v})});
-        }
-      });
-    fetch(`http://localhost:3001/brightness?device=${state.currentDevice}`)
-      .then((resp) => resp.json())
-      .then((currentBrightness: number) => {
-        if (state.currentDevice === Device.BEDROOM) {
-          setState({ ... state, bedroomBrightness: currentBrightness});
-        } else {
-          setState({ ...state, livingroomBrightness: currentBrightness});
-        }
-      })
-     */
-  }, [state.currentDevice]);
 
   function setCurrentDevice(newDevice: Device) {
     setState({ ...state, currentDevice: newDevice });
   }
 
+  return (
+    <div className="App">
+      <DevicePicker currentDevice={state.currentDevice} setCurrentDevice={(newDevice: Device) => setCurrentDevice(newDevice)} />
+      <Controller device={state.currentDevice} />
+    </div>
+  );
 
+/*
   if (state.livingroomColor || state.bedroomColor) {
-    if (state.currentDevice === Device.BEDROOM && state.bedroomColor && state.bedroomBrightness) {
+    if (state.currentDevice === Device.BEDROOM && state.bedroomColor && state.bedroomBrightness && state.bedroomOn !== null) {
       return (
         <div className="App">
           <div>
             <DevicePicker setCurrentDevice={(currentDevice: Device) => setCurrentDevice(currentDevice)} currentDevice={state.currentDevice} />
           </div>
+          <Toggle currentDevice={state.currentDevice} status={state.bedroomOn} />
           <Picker currentDevice={state.currentDevice} initialColor={state.bedroomColor} />
           <Brightness initialBrightness={state.bedroomBrightness} currentDevice={state.currentDevice} />
         </div>
       )
-    } else if (state.currentDevice === Device.COMPUTER && state.livingroomColor && state.livingroomBrightness) {
+    } else if (state.currentDevice === Device.COMPUTER && state.livingroomColor && state.livingroomBrightness && state.livingroomOn !== null) {
       return (
         <div className="App">
           <div>
             <DevicePicker setCurrentDevice={(currentDevice: Device) => setCurrentDevice(currentDevice)} currentDevice={state.currentDevice} />
           </div>
+          <Toggle currentDevice={state.currentDevice} status={state.livingroomOn} />
           <Picker currentDevice={state.currentDevice} initialColor={state.livingroomColor} />
           <Brightness initialBrightness={state.livingroomBrightness} currentDevice={state.currentDevice} />
         </div>
@@ -116,6 +76,7 @@ function App() {
       <FontAwesomeIcon icon={faSpinner} />
     </div>
   );
+ */
 }
 
 export default App;
