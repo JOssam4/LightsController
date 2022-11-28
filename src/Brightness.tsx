@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Slider from '@mui/material/Slider';
 import { Device } from './DevicePicker';
+import Stack from '@mui/material/Stack';
+import Slider from '@mui/material/Slider';
+import { BrightnessLow, BrightnessHigh } from '@mui/icons-material';
 
 interface Props {
   initialBrightness: number;
@@ -41,11 +43,15 @@ export default function Brightness(props: Props) {
   if (props.initialBrightness) {
     return (
       <div id="slider">
-      <Slider defaultValue={state.brightness}
-              aria-label="Brightness Slider"
-              min={1} max={100}
-              valueLabelDisplay="on"
-              onChange={(event, newVal: number | number[]) => changeHandler(event, newVal)}/>
+        <Stack spacing={2} direction="row" alignItems="center">
+          <BrightnessLow/>
+          <Slider defaultValue={state.brightness}
+                  aria-label="Brightness Slider"
+                  min={1} max={100}
+                  valueLabelDisplay="on"
+                  onChange={(event, newVal: number | number[]) => changeHandler(event, newVal)}/>
+          <BrightnessHigh/>
+        </Stack>
       </div>
     );
   } else {
