@@ -69,6 +69,8 @@ export default function Picker(props: Props) {
         <ColorPicker width={Math.min(456, window.innerWidth * 0.8)} color={color}
                      onChange={(color) => updateLights(color)}
         />
+        <br />
+        <br />
         <Stack spacing={2} direction="row" alignItems="center">
           <BrightnessLow/>
           <Slider value={color.hsv.v}

@@ -41,9 +41,8 @@
   }
 }
 
-#preview {
-  width: min(456px, 80%);
-  height: 50%
+#device-picker {
+  margin-top: min(15px, 10%);
 }
 
 #slider {
