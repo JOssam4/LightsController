@@ -66,20 +66,20 @@ export default function Picker(props: Props) {
   if (props.initialColor) {
     return (
       <div className="color-picker">
-        <ColorPicker width={Math.min(456, window.innerWidth * 0.8)} color={color}
+        <ColorPicker width={Math.min(456, window.innerWidth * 0.8)} color={color} dark
                      onChange={(color) => updateLights(color)}
         />
         <br />
         <br />
         <Stack spacing={2} direction="row" alignItems="center">
-          <BrightnessLow/>
+          <BrightnessLow style={{color: 'white'}}/>
           <Slider value={color.hsv.v}
                   aria-label="Brightness Slider"
                   min={1} max={100}
                   valueLabelDisplay="on"
                   onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
           />
-          <BrightnessHigh/>
+          <BrightnessHigh style={{color: 'white'}} />
         </Stack>
       </div>
     );
