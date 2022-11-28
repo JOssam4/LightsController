@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {Device} from './DevicePicker';
 import {Color, toColor} from 'react-color-palette';
 import Picker from './Picker';
-import Brightness from './Brightness';
 import Toggle from './Toggle';
 
 
@@ -53,7 +52,6 @@ export default function Controller(props: Props) {
       <div>
         <Toggle currentDevice={props.device} status={state.toggle} />
         <Picker currentDevice={props.device} initialColor={state.color} />
-        <Brightness initialBrightness={state.brightness} currentDevice={props.device} />
       </div>
     );
   } else {
