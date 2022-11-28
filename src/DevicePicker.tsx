@@ -29,16 +29,29 @@ export default function DevicePicker(props: Props) {
     setState({ ...state, currentDevice: newDevice });
   }
 
-  return (
-    <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
-      <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
-        <FontAwesomeIcon icon={faBed} />
-      </ToggleButton>
-      <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
-        <FontAwesomeIcon icon={faDesktop} />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  )
+  if (state.currentDevice === Device.BEDROOM) {
+    return (
+      <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
+        <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights" disabled>
+          <FontAwesomeIcon icon={faBed} />
+        </ToggleButton>
+        <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
+          <FontAwesomeIcon icon={faDesktop} />
+        </ToggleButton>
+      </ToggleButtonGroup>
+    );
+  } else {
+    return (
+      <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
+        <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
+          <FontAwesomeIcon icon={faBed} />
+        </ToggleButton>
+        <ToggleButton value={Device.COMPUTER} aria-label="computer lights" disabled>
+          <FontAwesomeIcon icon={faDesktop} />
+        </ToggleButton>
+      </ToggleButtonGroup>
+    )
+  }
 }
 
 export { Device };
