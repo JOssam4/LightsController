@@ -3,8 +3,7 @@ import "react-color-palette/lib/css/styles.css";
 import './App.css';
 import Controller from './Controller';
 import DevicePicker, {Device} from './DevicePicker';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faSpinner} from '@fortawesome/free-solid-svg-icons';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 interface InitialResponse {
   color: ColorResponse;
@@ -22,6 +21,12 @@ interface State {
   currentDevice: Device;
 }
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 
 function App() {
   const [state, setState] = useState<State>({
@@ -34,8 +39,11 @@ function App() {
 
   return (
     <div className="App">
-      <DevicePicker currentDevice={state.currentDevice} setCurrentDevice={(newDevice: Device) => setCurrentDevice(newDevice)} />
-      <Controller device={state.currentDevice} />
+      <ThemeProvider theme={darkTheme}>
+        <DevicePicker currentDevice={state.currentDevice}
+                      setCurrentDevice={(newDevice: Device) => setCurrentDevice(newDevice)}/>
+        <Controller device={state.currentDevice}/>
+      </ThemeProvider>
     </div>
   );
 

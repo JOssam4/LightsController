@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faDesktop, faBed } from "@fortawesome/free-solid-svg-icons";
+// import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+// import { faDesktop, faBed } from "@fortawesome/free-solid-svg-icons";
+import { Bed, Computer } from '@mui/icons-material';
+
 
 enum Device {
   BEDROOM,
@@ -33,23 +35,25 @@ export default function DevicePicker(props: Props) {
     return (
       <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
         <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights" disabled>
-          <FontAwesomeIcon icon={faBed} />
+          <Bed fontSize="large"/>
         </ToggleButton>
         <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
-          <FontAwesomeIcon icon={faDesktop} />
+          <Computer fontSize="large" />
         </ToggleButton>
       </ToggleButtonGroup>
     );
   } else {
     return (
-      <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
-        <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
-          <FontAwesomeIcon icon={faBed} />
-        </ToggleButton>
-        <ToggleButton value={Device.COMPUTER} aria-label="computer lights" disabled>
-          <FontAwesomeIcon icon={faDesktop} />
-        </ToggleButton>
-      </ToggleButtonGroup>
+      <div id="device-picker">
+        <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
+          <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
+            <Bed fontSize="large" />
+          </ToggleButton>
+          <ToggleButton value={Device.COMPUTER} aria-label="computer lights" disabled>
+            <Computer fontSize="large" />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </div>
     )
   }
 }
