@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {IconButton} from '@mui/material';
-import {PowerSettingsNew} from '@mui/icons-material';
+import {PowerSettingsNewOutlined} from '@mui/icons-material';
 import {Device} from "./DevicePicker";
 
 interface Props {
@@ -44,14 +44,14 @@ export default function Toggle(props: Props) {
 
   if (state.status) {
     return (
-      <IconButton aria-label="On/Off" color="primary" onClick={() => handleClick()}>
-        <PowerSettingsNew />
+      <IconButton aria-label="On/Off" color="success" onClick={() => handleClick()}>
+        <PowerSettingsNewOutlined fontSize="large" />
       </IconButton>
     );
   } else {
     return (
-      <IconButton aria-label="On/Off" color="secondary" onClick={() => handleClick()}>
-        <PowerSettingsNew />
+      <IconButton aria-label="On/Off" onClick={() => handleClick()}>
+        <PowerSettingsNewOutlined fontSize="large" />
       </IconButton>
     );
   }
