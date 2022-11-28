@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {IconButton} from '@mui/material';
-import {PowerSettingsNewOutlined} from '@mui/icons-material';
-import {Device} from "./DevicePicker";
+import { IconButton } from '@mui/material';
+import { PowerSettingsNewOutlined } from '@mui/icons-material';
+import { Device } from "./DevicePicker";
 
 interface Props {
   currentDevice: Device;
@@ -23,7 +23,7 @@ export default function Toggle(props: Props) {
 
   function handleClick() {
     console.log('clicked toggle button');
-    fetch(`http://localhost:3001/toggle?device=${props.currentDevice}`, {
+    fetch(`/toggle?device=${props.currentDevice}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

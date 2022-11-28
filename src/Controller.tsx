@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {Device} from './DevicePicker';
-import {Color, toColor} from 'react-color-palette';
+import { Device } from './DevicePicker';
+import { Color, toColor } from 'react-color-palette';
 import Picker from './Picker';
 import Toggle from './Toggle';
 
@@ -36,7 +36,7 @@ export default function Controller(props: Props) {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:3001/state?device=${props.device}`)
+    fetch(`/state?device=${props.device}`)
       .then((resp) => resp.json())
       .then((response: LightState) => {
         setState({

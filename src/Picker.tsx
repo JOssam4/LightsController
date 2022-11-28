@@ -20,7 +20,7 @@ export default function Picker(props: Props) {
   function updateLights(color: Color) {
     const hsv = color.hsv;
     setColor(color);
-    fetch(`http://localhost:3001/color?device=${props.currentDevice}`, {
+    fetch(`/color?device=${props.currentDevice}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -45,7 +45,7 @@ export default function Picker(props: Props) {
       s: color.hsv.s,
       v: brightness,
     }));
-    fetch(`http://localhost:3001/brightness?device=${props.currentDevice}`, {
+    fetch(`/brightness?device=${props.currentDevice}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

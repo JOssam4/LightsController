@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-// import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-// import { faDesktop, faBed } from "@fortawesome/free-solid-svg-icons";
 import { Bed, Computer } from '@mui/icons-material';
 
 

@@ -46,45 +46,6 @@ function App() {
       </ThemeProvider>
     </div>
   );
-
-/*
-  if (state.livingroomColor || state.bedroomColor) {
-    if (state.currentDevice === Device.BEDROOM && state.bedroomColor && state.bedroomBrightness && state.bedroomOn !== null) {
-      return (
-        <div className="App">
-          <div>
-            <DevicePicker setCurrentDevice={(currentDevice: Device) => setCurrentDevice(currentDevice)} currentDevice={state.currentDevice} />
-          </div>
-          <Toggle currentDevice={state.currentDevice} status={state.bedroomOn} />
-          <Picker currentDevice={state.currentDevice} initialColor={state.bedroomColor} />
-          <Brightness initialBrightness={state.bedroomBrightness} currentDevice={state.currentDevice} />
-        </div>
-      )
-    } else if (state.currentDevice === Device.COMPUTER && state.livingroomColor && state.livingroomBrightness && state.livingroomOn !== null) {
-      return (
-        <div className="App">
-          <div>
-            <DevicePicker setCurrentDevice={(currentDevice: Device) => setCurrentDevice(currentDevice)} currentDevice={state.currentDevice} />
-          </div>
-          <Toggle currentDevice={state.currentDevice} status={state.livingroomOn} />
-          <Picker currentDevice={state.currentDevice} initialColor={state.livingroomColor} />
-          <Brightness initialBrightness={state.livingroomBrightness} currentDevice={state.currentDevice} />
-        </div>
-      )
-    }
-    return (
-      <div className="App">
-        <FontAwesomeIcon icon={faSpinner} />
-      </div>
-    );
-  }
-
-  return (
-    <div className="App">
-      <FontAwesomeIcon icon={faSpinner} />
-    </div>
-  );
- */
 }
 
 export default App;
