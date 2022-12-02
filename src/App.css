@@ -41,6 +41,32 @@
   }
 }
 
+.color-picker .react-colorful {
+  width: 300px;
+  height: 300px;
+}
+
+.color-picker-input-field {
+  background: none;
+  border: 2px solid hsla(0, 0%, 100%, .1);
+  border-radius: 5px;
+  box-sizing: border-box;
+  color: #f3f3f3;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  padding: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.color-picker-input-label {
+  color: #999;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
 #device-picker {
   margin-top: min(15px, 10%);
 }

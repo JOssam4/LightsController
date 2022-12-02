@@ -1,19 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Device } from './DevicePicker';
-import { Color, toColor } from 'react-color-palette';
+import { HsvColor } from 'react-colorful';
 import Picker from './Picker';
 import Toggle from './Toggle';
 
-
-interface ColorResponse {
-  h: number;
-  s: number;
-  v: number;
-}
-
-
 interface LightState {
-  color: ColorResponse;
+  color: HsvColor;
   brightness: number;
   toggle: boolean;
 }
@@ -24,7 +16,7 @@ interface Props {
 
 interface State {
   toggle: boolean | null;
-  color: Color | null;
+  color: HsvColor | null;
   brightness: number | null;
 }
 
@@ -42,7 +34,7 @@ export default function Controller(props: Props) {
         setState({
           toggle: response.toggle,
           brightness: response.brightness,
-          color: toColor('hsv', response.color)
+          color: response.color
         })
       })
   }, [props.device]);

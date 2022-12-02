@@ -1,21 +1,9 @@
 import React, {useState} from 'react';
-import "react-color-palette/lib/css/styles.css";
 import './App.css';
 import Controller from './Controller';
 import DevicePicker, {Device} from './DevicePicker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-interface InitialResponse {
-  color: ColorResponse;
-  brightness: number;
-  toggleStatus: boolean;
-}
-
-interface ColorResponse {
-  h: number;
-  s: number;
-  v: number;
-}
 
 interface State {
   currentDevice: Device;
