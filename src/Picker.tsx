@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { HsvColorPicker, HsvColor } from 'react-colorful';
 import { Device } from './DevicePicker';
+import { Mode } from './ModePicker';
 import InputField from './InputField';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
@@ -10,10 +11,13 @@ import { BrightnessLow, BrightnessHigh } from '@mui/icons-material';
 interface Props {
   currentDevice: Device;
   initialColor: HsvColor;
+  mode: Mode;
+  initialWhiteBrightness: number;
 }
 
 export default function Picker(props: Props) {
   const [color, setColor] = useState<HsvColor>(props.initialColor);
+  const [whiteBrightness, setWhiteBrightness] = useState<number>(props.initialWhiteBrightness);
 
   useEffect(() => {
     setColor(props.initialColor);
@@ -58,11 +62,15 @@ export default function Picker(props: Props) {
 
   function updateBrightness(event: Event, newVal: number | number[]) {
     const brightness = (typeof newVal === "number") ? newVal : newVal[newVal.length - 1];
-    setColor({
-      h: color.h,
-      s: color.s,
-      v: brightness,
-    });
+    if (props.mode === Mode.COLOR) {
+      setColor({
+        h: color.h,
+        s: color.s,
+        v: brightness,
+      });
+    } else {
+      setWhiteBrightness(brightness);
+    }
     fetch(`/brightness?device=${props.currentDevice}`, {
       method: 'PUT',
       headers: {
@@ -81,6 +89,22 @@ export default function Picker(props: Props) {
       });
   }
 
+  const brightnessSlider = (props.mode === Mode.COLOR) ? (
+    <Slider value={color.v}
+                  aria-label="Brightness Slider"
+                  min={1} max={100}
+                  valueLabelDisplay="on"
+                  onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
+    />
+  ) : (
+    <Slider value={whiteBrightness}
+                  aria-label="Brightness Slider"
+                  min={1} max={100}
+                  valueLabelDisplay="on"
+                  onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
+    />
+  )
+
   if (props.initialColor) {
     return (
       <div className="color-picker">
@@ -94,12 +118,7 @@ export default function Picker(props: Props) {
         <br />
         <Stack spacing={2} direction="row" alignItems="center">
           <BrightnessLow style={{color: 'white'}}/>
-          <Slider value={color.v}
-                  aria-label="Brightness Slider"
-                  min={1} max={100}
-                  valueLabelDisplay="on"
-                  onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
-          />
+          {brightnessSlider}
           <BrightnessHigh style={{color: 'white'}} />
         </Stack>
         <br />
