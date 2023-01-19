@@ -44,14 +44,14 @@ export default function Toggle(props: Props) {
 
   if (state.status) {
     return (
-      <IconButton aria-label="On/Off" color="success" onClick={() => handleClick()}>
-        <PowerSettingsNewOutlined fontSize="large" />
+      <IconButton aria-label="On/Off" color="success" onClick={() => handleClick()} id="toggle-button">
+        <PowerSettingsNewOutlined fontSize="inherit" />
       </IconButton>
     );
   } else {
     return (
-      <IconButton aria-label="On/Off" onClick={() => handleClick()}>
-        <PowerSettingsNewOutlined fontSize="large" />
+      <IconButton aria-label="On/Off" onClick={() => handleClick()} id="toggle-button">
+        <PowerSettingsNewOutlined fontSize="inherit" />
       </IconButton>
     );
   }

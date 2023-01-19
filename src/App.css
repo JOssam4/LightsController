@@ -67,8 +67,16 @@
   text-transform: capitalize;
 }
 
+#toggle-button {
+  font-size: 5rem;
+}
+
 #device-picker {
   margin-top: min(15px, 10%);
+}
+
+#mode-picker {
+  margin-bottom: min(15px, 10%);
 }
 
 #slider {

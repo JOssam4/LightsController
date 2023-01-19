@@ -31,19 +31,21 @@ export default function DevicePicker(props: Props) {
 
   if (state.currentDevice === Device.BEDROOM) {
     return (
-      <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
-        <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights" disabled>
-          <Bed fontSize="large"/>
-        </ToggleButton>
-        <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
-          <Computer fontSize="large" />
-        </ToggleButton>
-      </ToggleButtonGroup>
+      <div id="device-picker">
+        <ToggleButtonGroup size="large" value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
+          <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights" disabled>
+            <Bed fontSize="large"/>
+          </ToggleButton>
+          <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
+            <Computer fontSize="large" />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </div>
     );
   } else {
     return (
       <div id="device-picker">
-        <ToggleButtonGroup value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
+        <ToggleButtonGroup size="large" value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
           <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
             <Bed fontSize="large" />
           </ToggleButton>
