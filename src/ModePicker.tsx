@@ -62,7 +62,7 @@ export default function ModePicker(props: Props) {
     } else {
         return (
             <div id="mode-picker">
-                <ToggleButtonGroup value={mode} exclusive onChange={(event, newMode: Mode) => updateMode(newMode)} aria-label="mode chooser">
+                <ToggleButtonGroup value={mode} size="small" exclusive onChange={(event, newMode: Mode) => updateMode(newMode)} aria-label="mode chooser">
                     <ToggleButton value={Mode.WHITE} aria-label="white">
                         <p>WHITE</p>
                     </ToggleButton>
