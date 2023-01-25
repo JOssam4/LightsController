@@ -26,7 +26,6 @@ export default function ModePicker(props: Props) {
     }, [props.initialMode]);
 
     function updateMode(mode: Mode) {
-        // setMode(mode);
         props.setMode(mode);
         fetch(`/mode?device=${props.currentDevice}`, {
             method: 'PUT',
