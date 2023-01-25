@@ -4,9 +4,7 @@ import ModePicker, { Mode } from './ModePicker';
 import { HsvColor } from 'react-colorful';
 import Picker from './Picker';
 import Toggle from './Toggle';
-import Stack from '@mui/material/Stack';
-import Slider from '@mui/material/Slider';
-import { BrightnessLow, BrightnessHigh } from '@mui/icons-material';
+import ScenePicker from './ScenePicker';
 
 interface LightState {
   color: HsvColor;
@@ -49,11 +47,21 @@ export default function Controller(props: Props) {
   }, [props.device, state.mode]);
 
   if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null) {
+    if (state.mode === Mode.SCENE) {
+      return (
+        <div id="controller">
+          <Toggle currentDevice={props.device} status={state.toggle} />
+          <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
+          <ScenePicker currentDevice={props.device} brightness={50} />
+        </div>
+      );
+    }
     return (
       <div>
         <Toggle currentDevice={props.device} status={state.toggle} />
         <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-        <Picker currentDevice={props.device} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} />
+        <Picker currentDevice={props.device} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
+        <ScenePicker currentDevice={props.device} brightness={50} />
       </div>
     );
   } else {

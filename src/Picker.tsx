@@ -13,6 +13,7 @@ interface Props {
   initialColor: HsvColor;
   mode: Mode;
   initialWhiteBrightness: number;
+  overrideMode: () => void;
 }
 
 export default function Picker(props: Props) {
@@ -24,6 +25,8 @@ export default function Picker(props: Props) {
   }, [props.initialColor]);
 
   function updateLights(color: HsvColor) {
+    // Allow switching of modes just by touching the color pad
+    props.overrideMode();
     setColor(color);
     fetch(`/color?device=${props.currentDevice}`, {
       method: 'PUT',

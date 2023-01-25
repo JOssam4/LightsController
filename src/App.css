@@ -82,3 +82,14 @@
 #slider {
   width: 50%;
 }
+
+.scene-description {
+  text-align: center;
+}
+
+#controller {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

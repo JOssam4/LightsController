@@ -56,6 +56,25 @@ export default function ModePicker(props: Props) {
                     <ToggleButton value={Mode.COLOR} aria-label="color">
                         <p>COLOR</p>
                     </ToggleButton>
+                    <ToggleButton value={Mode.SCENE} aria-label="scene">
+                        <p>SCENE</p>
+                    </ToggleButton>
+                </ToggleButtonGroup>
+            </div>
+        );
+    } else if (mode === Mode.COLOR) {
+        return (
+            <div id="mode-picker">
+                <ToggleButtonGroup value={mode} size="small" exclusive onChange={(event, newMode: Mode) => updateMode(newMode)} aria-label="mode chooser">
+                    <ToggleButton value={Mode.WHITE} aria-label="white">
+                        <p>WHITE</p>
+                    </ToggleButton>
+                    <ToggleButton value={Mode.COLOR} aria-label="color" disabled>
+                        <p>COLOR</p>
+                    </ToggleButton>
+                    <ToggleButton value={Mode.SCENE} aria-label="scene">
+                        <p>SCENE</p>
+                    </ToggleButton>
                 </ToggleButtonGroup>
             </div>
         );
@@ -66,8 +85,11 @@ export default function ModePicker(props: Props) {
                     <ToggleButton value={Mode.WHITE} aria-label="white">
                         <p>WHITE</p>
                     </ToggleButton>
-                    <ToggleButton value={Mode.COLOR} aria-label="color" disabled>
+                    <ToggleButton value={Mode.COLOR} aria-label="color">
                         <p>COLOR</p>
+                    </ToggleButton>
+                    <ToggleButton value={Mode.SCENE} aria-label="scene" disabled>
+                        <p>SCENE</p>
                     </ToggleButton>
                 </ToggleButtonGroup>
             </div>
