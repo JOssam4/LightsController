@@ -3,7 +3,7 @@ import { Device } from './DevicePicker';
 import Scene, { SceneParts } from './Scene';
 import { getCoolColorFade, getWarmColorFade } from './SavedScenes';
 import Grid from '@mui/material/Unstable_Grid2';
-import Paper from '@mui/material/Paper';
+
 
 interface Props {
     currentDevice: Device;
