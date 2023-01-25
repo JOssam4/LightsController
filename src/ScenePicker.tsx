@@ -59,6 +59,13 @@ export default function ScenePicker(props: Props) {
         });
     }, [state.brightness]);
 
+    useEffect(() => {
+        setState({
+            ...state,
+            brightness: props.brightness,
+        });
+    }, [props.brightness])
+
     function setActiveScene(scene: SceneParts) {
         fetch(`/scene?device=${props.currentDevice}`, {
             method: 'PUT',
