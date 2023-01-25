@@ -11,6 +11,7 @@ interface LightState {
   mode: Mode;
   brightness: number;
   toggle: boolean;
+  sceneBrightness: number;
 }
 
 interface Props {
@@ -22,6 +23,7 @@ interface State {
   mode: Mode | null;
   color: HsvColor | null;
   brightness: number | null;
+  sceneBrightness: number | null;
 }
 
 export default function Controller(props: Props) {
@@ -31,6 +33,7 @@ export default function Controller(props: Props) {
     color: null,
     // brightness = white light brightness. HSV stores its own brightness value.
     brightness: null,
+    sceneBrightness: null,
   });
 
   useEffect(() => {
@@ -41,18 +44,20 @@ export default function Controller(props: Props) {
           toggle: response.toggle,
           mode: response.mode,
           brightness: response.brightness,
-          color: response.color
+          color: response.color,
+          sceneBrightness: response.sceneBrightness
         })
+        console.log(`sceneBrightness: ${response.sceneBrightness}`)
       })
   }, [props.device, state.mode]);
 
-  if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null) {
+  if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null && state.sceneBrightness !== null) {
     if (state.mode === Mode.SCENE) {
       return (
         <div id="controller">
           <Toggle currentDevice={props.device} status={state.toggle} />
           <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-          <ScenePicker currentDevice={props.device} brightness={50} />
+          <ScenePicker currentDevice={props.device} brightness={state.sceneBrightness} />
         </div>
       );
     }
@@ -61,7 +66,7 @@ export default function Controller(props: Props) {
         <Toggle currentDevice={props.device} status={state.toggle} />
         <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
         <Picker currentDevice={props.device} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
-        <ScenePicker currentDevice={props.device} brightness={50} />
+        <ScenePicker currentDevice={props.device} brightness={state.sceneBrightness} />
       </div>
     );
   } else {

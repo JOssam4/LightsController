@@ -3,6 +3,9 @@ import { Device } from './DevicePicker';
 import Scene, { SceneParts } from './Scene';
 import { getCoolColorFade, getWarmColorFade } from './SavedScenes';
 import Grid from '@mui/material/Unstable_Grid2';
+import Stack from '@mui/material/Stack';
+import Slider from '@mui/material/Slider';
+import { BrightnessLow, BrightnessHigh } from '@mui/icons-material';
 
 
 interface Props {
@@ -12,6 +15,7 @@ interface Props {
 
 interface State {
     scenes: SceneParts[];
+    brightness: number;
 }
 
 function getRgbs(c: number, x: number, h: number): [number, number, number] {
@@ -44,17 +48,19 @@ function getRGB(h: number, s: number, v: number) {
 
 export default function ScenePicker(props: Props) {
     const [state, setState] = useState<State>({
-        scenes: [getCoolColorFade(props.brightness), getWarmColorFade(props.brightness)],
+        scenes: [],
+        brightness: props.brightness,
     });
 
     useEffect(() => {
         setState({
-            scenes: [getCoolColorFade(props.brightness), getWarmColorFade(props.brightness)],
+            ...state,
+            scenes: [getCoolColorFade(state.brightness), getWarmColorFade(state.brightness)],
         });
-    }, [props.brightness])
+    }, [state.brightness]);
 
     function setActiveScene(scene: SceneParts) {
-        fetch(`http://localhost:3001/scene?device=${props.currentDevice}`, {
+        fetch(`/scene?device=${props.currentDevice}`, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -82,7 +88,6 @@ export default function ScenePicker(props: Props) {
             const lastScene = scene.parts[scene.parts.length - 1];
             const lastSceneConversion = getRGB(lastScene.h, lastScene.s, lastScene.v);
             const lastRGB = `rgb(${lastSceneConversion[0]}, ${lastSceneConversion[1]}, ${lastSceneConversion[2]})`;
-            console.dir([firstRGB, lastRGB]);
             ret.push(
                 <Grid xs={6} sm={6} md={6} lg={6} xl={6}>
                     <Scene 
@@ -90,7 +95,6 @@ export default function ScenePicker(props: Props) {
                         sceneparts={scene} 
                         sceneName={scene.sceneName}
                         onClickHandler={(sceneParts: SceneParts) => setActiveScene(sceneParts)} 
-                        key={ret.length}
                     />
                 </Grid>
             );
@@ -98,9 +102,42 @@ export default function ScenePicker(props: Props) {
         return ret;
     }
 
+    function updateBrightness(event: Event, newVal: number | number[]) {
+        const brightness = (typeof newVal === 'number') ? newVal : newVal[newVal.length - 1]
+        setState({...state, brightness });
+        fetch(`/brightness?device=${props.currentDevice}`, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({brightness}),
+        })
+            .then((response) => {
+                if (!response.ok && response.status !== 429) {
+                    console.log(`error code: ${response.status}`);
+                    console.error(response.statusText);
+                } else {
+                    console.log('too many requests');
+                }
+            });
+    }
+
     return (
         <Grid container spacing={2}>
             {renderScenes()}
+            <Grid xs={12} sm={12} md={12} lg={12} xl={12}>
+                <Stack spacing={2} direction="row" alignItems="center">
+                    <BrightnessLow style={{color: 'white'}} />
+                    <Slider value={state.brightness}
+                    aria-label="Brightness Slider"
+                    min={1} max={100} 
+                    valueLabelDisplay="on"
+                    onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
+                />    
+                    <BrightnessHigh style={{color: 'white'}} />
+                </Stack>
+            </Grid>
         </Grid>
     );
 }
