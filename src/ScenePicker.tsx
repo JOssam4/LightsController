@@ -64,7 +64,7 @@ export default function ScenePicker(props: Props) {
             ...state,
             brightness: props.brightness,
         });
-    }, [props.brightness])
+    }, [props.brightness]);
 
     function setActiveScene(scene: SceneParts) {
         fetch(`/scene?device=${props.currentDevice}`, {
