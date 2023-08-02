@@ -62,11 +62,10 @@ export default function Controller(props: Props) {
       );
     }
     return (
-      <div>
+      <div id="controller">
         <Toggle currentDevice={props.device} status={state.toggle} />
         <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
         <Picker currentDevice={props.device} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
-        <ScenePicker currentDevice={props.device} brightness={state.sceneBrightness} />
       </div>
     );
   } else {
