@@ -8,7 +8,7 @@ enum ChangeMode {
 
 function getCoolColorFade(brightness: number): SceneParts {
     const sceneparts: Scene[] = [];
-    for (let i = 166; i < 280; i += 22) {
+    for (let i = 166; i < 280; i += 11) {
         sceneparts.push(
             {
                 unitSwitchIntervalTime: 50,
@@ -31,7 +31,7 @@ function getCoolColorFade(brightness: number): SceneParts {
 
 function getWarmColorFade(brightness: number): SceneParts {
     const sceneparts: Scene[] = [];
-    for (let i = 322; i < 360; i += 22) {
+    for (let i = 322; i < 360; i += 11) {
         sceneparts.push(
             {
                 unitSwitchIntervalTime: 50,
@@ -45,7 +45,7 @@ function getWarmColorFade(brightness: number): SceneParts {
             },
         )
     }
-    for (let i = 0; i < 60; i += 22) {
+    for (let i = 0; i < 40; i += 11) {
         sceneparts.push(
             {
                 unitSwitchIntervalTime: 50,
