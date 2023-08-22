@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import { PowerSettingsNewOutlined } from '@mui/icons-material';
-import { Device } from "./DevicePicker";
+import {CompletedStatus} from "./Types";
 
 interface Props {
-  currentDevice: Device;
+  controlledDevices: Set<string>;
   status: boolean;
 }
 
@@ -23,23 +23,32 @@ export default function Toggle(props: Props) {
 
   function handleClick() {
     console.log('clicked toggle button');
-    fetch(`/toggle?device=${props.currentDevice}`, {
-      method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({toggle: !state.status}),
-    })
-      .then((response) => {
-        if (!response.ok && response.status !== 429) {
-          console.log(`error code: ${response.status}`);
-          console.error(response.statusText);
-        } else if (!response.ok) {
-          console.log('too many requests');
-        }
-      });
-    setState({ status: !state.status });
+
+    const promises = Array.from(props.controlledDevices).map((deviceId: string) => {
+      return fetch(`http://localhost:3001/toggle?device=${deviceId}`, {
+        method: 'PUT',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({toggle: !state.status}),
+      })
+          .then((response: Response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              console.error(response.text());
+            }
+          })
+          .then((respjson: CompletedStatus) => {
+            if (!respjson.completed) {
+              console.error(`Could not toggle device with id ${deviceId}`);
+            }
+          })
+          .catch((err) => console.error(err));
+    });
+    Promise.all(promises)
+        .then(() => setState({ status: !state.status }));
   }
 
   if (state.status) {

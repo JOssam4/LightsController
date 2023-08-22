@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Device } from './DevicePicker';
 import ModePicker, { Mode } from './ModePicker';
 import { HsvColor } from 'react-colorful';
 import Picker from './Picker';
 import Toggle from './Toggle';
-import ScenePicker from './ScenePicker';
 
 interface LightState {
   color: HsvColor;
@@ -15,7 +13,7 @@ interface LightState {
 }
 
 interface Props {
-  device: Device;
+  controlledDevices: Set<string>;
 }
 
 interface State {
@@ -31,41 +29,40 @@ export default function Controller(props: Props) {
     toggle: null,
     mode: null,
     color: null,
-    // brightness = white light brightness. HSV stores its own brightness value.
+    // brightness = white light brightness/hue warmth. HSV stores its own brightness value.
     brightness: null,
     sceneBrightness: null,
   });
 
   useEffect(() => {
-    fetch(`/state?device=${props.device}`)
-      .then((resp) => resp.json())
-      .then((response: LightState) => {
-        setState({
-          toggle: response.toggle,
-          mode: response.mode,
-          brightness: response.brightness,
-          color: response.color,
-          sceneBrightness: response.sceneBrightness
-        })
-        console.log(`sceneBrightness: ${response.sceneBrightness}`)
-      })
-  }, [props.device, state.mode]);
+    const promises: Promise<void>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
+      return fetch(`http://localhost:3001/state?device=${deviceId}`)
+          .then((resp: Response) => {
+            if (resp.ok) {
+              return resp.json();
+            } else {
+              console.error(resp.text());
+            }
+          })
+          .then((respjson: LightState) => setState({
+            toggle: respjson.toggle,
+            mode: respjson.mode,
+            brightness: respjson.brightness,
+            color: respjson.color,
+            sceneBrightness: respjson?.sceneBrightness,
+          }))
+          .catch((err) => console.error(err));
+    });
+    Promise.all(promises)
+        .then(() => console.log('Done getting light states in Controller.tsx'));
+  }, [props]);
 
   if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null && state.sceneBrightness !== null) {
-    if (state.mode === Mode.SCENE) {
-      return (
-        <div id="controller">
-          <Toggle currentDevice={props.device} status={state.toggle} />
-          <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-          <ScenePicker currentDevice={props.device} brightness={state.sceneBrightness} />
-        </div>
-      );
-    }
     return (
       <div id="controller">
-        <Toggle currentDevice={props.device} status={state.toggle} />
-        <ModePicker currentDevice={props.device} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-        <Picker currentDevice={props.device} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
+        <Toggle controlledDevices={props.controlledDevices} status={state.toggle} />
+        <ModePicker controlledDevices={props.controlledDevices} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
+        <Picker controlledDevices={props.controlledDevices} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
       </div>
     );
   } else {

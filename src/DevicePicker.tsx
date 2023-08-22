@@ -1,61 +1,61 @@
-import React, { useState } from 'react';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { Bed, Computer } from '@mui/icons-material';
-
-
-enum Device {
-  BEDROOM,
-  COMPUTER,
-}
+import React, {useState, useEffect, useRef} from 'react';
+import {DevicesResponse, DeviceType} from './Types';
+import { CircularProgress } from '@mui/material';
+import Device from './Device';
 
 interface Props {
-  currentDevice: Device;
-  setCurrentDevice: (device: Device) => void;
+    setControlledDevices: (deviceIds: Set<string>) => void;
 }
 
 interface State {
-  currentDevice: Device;
+    devices: DeviceType[] | undefined,
 }
 
 export default function DevicePicker(props: Props) {
-  const [state, setState] = useState<State>({
-    currentDevice: props.currentDevice,
-  });
+    const [state, setState] = useState<State>({
+        devices: undefined,
+    });
+    const controlledDeviceIds = useRef(new Set<string>());
 
-  function handleDeviceChange(event: React.MouseEvent, newDevice: Device) {
-    console.log(`newDevice: ${newDevice}`);
-    props.setCurrentDevice(newDevice);
-    setState({ ...state, currentDevice: newDevice });
-  }
+    useEffect(() => {
+        if (state.devices === undefined) {
+            fetch('http://localhost:3001/devices')
+                .then((resp: Response) => resp.json())
+                .then((devices: DevicesResponse) => {
+                    const hueDevices: DeviceType[] = devices.hue;
+                    const tuyaDevices: DeviceType[] = devices.tuya;
+                    setState({...state, devices: hueDevices.concat(tuyaDevices)});
+                });
+        }
+    }, [state]);
 
-  if (state.currentDevice === Device.BEDROOM) {
+    function setDeviceControlled(deviceId: string, isControlled: boolean) {
+        if (isControlled) {
+            controlledDeviceIds.current.add(deviceId);
+        } else {
+            controlledDeviceIds.current.delete(deviceId);
+        }
+        props.setControlledDevices(controlledDeviceIds.current);
+    }
+
+    if (state.devices === undefined) {
+        return (
+            <div className="device-tray">
+                <CircularProgress />
+            </div>
+        );
+    }
+
+    const devicesInTray = state.devices?.map((device: DeviceType) =>
+        <Device deviceId={device.id}
+                deviceName={device.name}
+                setControlled={(deviceId, isControlled) => setDeviceControlled(deviceId, isControlled)}
+        />);
+
+
     return (
-      <div id="device-picker">
-        <ToggleButtonGroup size="large" value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
-          <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights" disabled>
-            <Bed fontSize="large"/>
-          </ToggleButton>
-          <ToggleButton value={Device.COMPUTER} aria-label="computer lights">
-            <Computer fontSize="large" />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
+        <div className="device-tray">
+            { devicesInTray }
+        </div>
     );
-  } else {
-    return (
-      <div id="device-picker">
-        <ToggleButtonGroup size="large" value={state.currentDevice} exclusive onChange={(event, newDevice: Device) => handleDeviceChange(event, newDevice)} aria-label="device chooser">
-          <ToggleButton value={Device.BEDROOM} aria-label="bedroom lights">
-            <Bed fontSize="large" />
-          </ToggleButton>
-          <ToggleButton value={Device.COMPUTER} aria-label="computer lights" disabled>
-            <Computer fontSize="large" />
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
-    )
-  }
 }
-
-export { Device };

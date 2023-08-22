@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Device } from './DevicePicker';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-enum Mode {
+const enum Mode {
   WHITE = 'white',
   COLOR = 'colour',
   SCENE = 'scene',
   MUSIC = 'music',
 }
 
+
 interface Props {
-    currentDevice: Device;
+    controlledDevices: Set<string>;
     initialMode: Mode;
     setMode: (mode: Mode) => void;
 }
@@ -26,23 +26,28 @@ export default function ModePicker(props: Props) {
     }, [props.initialMode]);
 
     function updateMode(mode: Mode) {
-        props.setMode(mode);
-        fetch(`/mode?device=${props.currentDevice}`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({mode}),
+        const promises = Array.from(props.controlledDevices).map((deviceId: string) => {
+            return fetch(`http://localhost:3001/mode?device=${deviceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({mode}),
+            })
+                .then((response: Response) => {
+                    if (response.ok) {
+                        return response.json();
+                    } else if (response.status === 429) {
+                        console.error('Too many requests');
+                    } else {
+                        console.error(response.text());
+                    }
+                })
+                .catch((err) => console.error(err));
         })
-          .then((response) => {
-            if (!response.ok && response.status !== 429) {
-              console.log(`error code: ${response.status}`);
-              console.error(response.statusText);
-            } else {
-              console.log('too many requests');
-            }
-          });
+        Promise.all(promises)
+            .then(() => props.setMode(mode));
     }
 
     if (mode === Mode.WHITE) {
@@ -55,25 +60,6 @@ export default function ModePicker(props: Props) {
                     <ToggleButton value={Mode.COLOR} aria-label="color">
                         <p>COLOR</p>
                     </ToggleButton>
-                    <ToggleButton value={Mode.SCENE} aria-label="scene">
-                        <p>SCENE</p>
-                    </ToggleButton>
-                </ToggleButtonGroup>
-            </div>
-        );
-    } else if (mode === Mode.COLOR) {
-        return (
-            <div id="mode-picker">
-                <ToggleButtonGroup value={mode} size="small" exclusive onChange={(event, newMode: Mode) => updateMode(newMode)} aria-label="mode chooser">
-                    <ToggleButton value={Mode.WHITE} aria-label="white">
-                        <p>WHITE</p>
-                    </ToggleButton>
-                    <ToggleButton value={Mode.COLOR} aria-label="color" disabled>
-                        <p>COLOR</p>
-                    </ToggleButton>
-                    <ToggleButton value={Mode.SCENE} aria-label="scene">
-                        <p>SCENE</p>
-                    </ToggleButton>
                 </ToggleButtonGroup>
             </div>
         );
@@ -84,11 +70,8 @@ export default function ModePicker(props: Props) {
                     <ToggleButton value={Mode.WHITE} aria-label="white">
                         <p>WHITE</p>
                     </ToggleButton>
-                    <ToggleButton value={Mode.COLOR} aria-label="color">
+                    <ToggleButton value={Mode.COLOR} aria-label="color" disabled>
                         <p>COLOR</p>
-                    </ToggleButton>
-                    <ToggleButton value={Mode.SCENE} aria-label="scene" disabled>
-                        <p>SCENE</p>
                     </ToggleButton>
                 </ToggleButtonGroup>
             </div>

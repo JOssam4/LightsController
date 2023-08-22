@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import './App.css';
 import Controller from './Controller';
-import DevicePicker, {Device} from './DevicePicker';
+import DevicePicker from './DevicePicker';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-
+import {DevicesResponse} from './Types';
 
 interface State {
-  currentDevice: Device;
+  // currentDevice: Device;
+  devices: DevicesResponse | undefined;
+  controlledDevices: Set<string>;
 }
 
 const darkTheme = createTheme({
@@ -15,22 +17,21 @@ const darkTheme = createTheme({
   },
 });
 
-
 function App() {
   const [state, setState] = useState<State>({
-    currentDevice: Device.COMPUTER,
+    devices: undefined,
+    controlledDevices: new Set<string>(),
   });
 
-  function setCurrentDevice(newDevice: Device) {
-    setState({ ...state, currentDevice: newDevice });
+  function setControlledDevices(controlledDevices: Set<string>): void {
+    setState({ ...state, controlledDevices });
   }
 
   return (
     <div className="App">
       <ThemeProvider theme={darkTheme}>
-        <DevicePicker currentDevice={state.currentDevice}
-                      setCurrentDevice={(newDevice: Device) => setCurrentDevice(newDevice)}/>
-        <Controller device={state.currentDevice}/>
+        <DevicePicker setControlledDevices={setControlledDevices} />
+        <Controller controlledDevices={state.controlledDevices}/>
       </ThemeProvider>
     </div>
   );

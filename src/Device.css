@@ -1,0 +1,20 @@
+.device {
+    width: 33%;
+    max-width: 100px;
+    height: 20%;
+    max-height: 100px;
+    border: 5px solid white;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: #242626;
+    color: white;
+}
+
+.device-tray {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
