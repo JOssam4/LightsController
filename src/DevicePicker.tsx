@@ -19,6 +19,7 @@ export default function DevicePicker(props: Props) {
 
     useEffect(() => {
         if (state.devices === undefined) {
+            console.log(`fetch('http://localhost:3001/devices')`);
             fetch('http://localhost:3001/devices')
                 .then((resp: Response) => resp.json())
                 .then((devices: DevicesResponse) => {
@@ -46,8 +47,9 @@ export default function DevicePicker(props: Props) {
         );
     }
 
-    const devicesInTray = state.devices?.map((device: DeviceType) =>
-        <Device deviceId={device.id}
+    const devicesInTray = state.devices?.map((device: DeviceType, i: number) =>
+        <Device key={i}
+                deviceId={device.id}
                 deviceName={device.name}
                 setControlled={(deviceId, isControlled) => setDeviceControlled(deviceId, isControlled)}
         />);
