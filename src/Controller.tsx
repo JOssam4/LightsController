@@ -36,8 +36,7 @@ export default function Controller(props: Props) {
 
   useEffect(() => {
     const promises: Promise<void>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
-      console.log(`fetch(\`http://localhost:3001/state?device=${deviceId}\`)`);
-      return fetch(`http://localhost:3001/state?device=${deviceId}`)
+      return fetch(`/state?device=${deviceId}`)
           .then((resp: Response) => {
             if (resp.ok) {
               return resp.json();

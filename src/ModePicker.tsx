@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
@@ -19,6 +19,7 @@ interface Props {
 
 export default function ModePicker(props: Props) {
     const [mode, setMode] = useState(props.initialMode);
+    const canUpdateMode = useRef(true);
 
     
     useEffect(() => {
@@ -26,28 +27,28 @@ export default function ModePicker(props: Props) {
     }, [props.initialMode]);
 
     function updateMode(mode: Mode) {
-        const promises = Array.from(props.controlledDevices).map((deviceId: string) => {
-            return fetch(`http://localhost:3001/mode?device=${deviceId}`, {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({mode}),
-            })
-                .then((response: Response) => {
-                    if (response.ok) {
-                        return response.json();
-                    } else if (response.status === 429) {
-                        console.error('Too many requests');
-                    } else {
-                        console.error(response.text());
-                    }
-                })
-                .catch((err) => console.error(err));
+        if (!canUpdateMode.current) {
+            return;
+        }
+        canUpdateMode.current = false;
+        props.setMode(mode);
+        fetch(`/mode?device=${Array.from(props.controlledDevices)}`, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({mode}),
         })
-        Promise.all(promises)
-            .then(() => props.setMode(mode));
+          .then((response) => {
+            if (!response.ok && response.status !== 429) {
+              console.log(`error code: ${response.status}`);
+              console.error(response.statusText);
+            } else if (!response.ok && response.status === 429) {
+              console.log('too many requests');
+            }
+          })
+            .finally(() => setTimeout(() => canUpdateMode.current = true, 200));
     }
 
     if (mode === Mode.WHITE) {

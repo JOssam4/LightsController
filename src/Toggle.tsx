@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { IconButton } from '@mui/material';
 import { PowerSettingsNewOutlined } from '@mui/icons-material';
-import {CompletedStatus} from "./Types";
 
 interface Props {
   controlledDevices: Set<string>;
@@ -16,39 +15,39 @@ export default function Toggle(props: Props) {
   const [state, setState] = useState<State>({
     status: props.status,
   });
+  const canUpdateToggle = useRef(true);
 
   useEffect(() => {
     setState({status: props.status});
   }, [props])
 
   function handleClick() {
+    if (!canUpdateToggle.current) {
+      return;
+    }
+    canUpdateToggle.current = false;
     console.log('clicked toggle button');
-
-    const promises = Array.from(props.controlledDevices).map((deviceId: string) => {
-      return fetch(`http://localhost:3001/toggle?device=${deviceId}`, {
-        method: 'PUT',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({toggle: !state.status}),
+    fetch(`/toggle?device=${Array.from(props.controlledDevices)}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({toggle: !state.status}),
+    })
+      .then((response) => {
+        if (!response.ok && response.status !== 429) {
+          console.log(`error code: ${response.status}`);
+          console.error(response.statusText);
+        } else if (!response.ok && response.status === 429) {
+          console.log('too many requests');
+        }
       })
-          .then((response: Response) => {
-            if (response.ok) {
-              return response.json();
-            } else {
-              console.error(response.text());
-            }
-          })
-          .then((respjson: CompletedStatus) => {
-            if (!respjson.completed) {
-              console.error(`Could not toggle device with id ${deviceId}`);
-            }
-          })
-          .catch((err) => console.error(err));
-    });
-    Promise.all(promises)
-        .then(() => setState({ status: !state.status }));
+        .finally(() => {
+          setState({ status: !state.status });
+          setTimeout(() => canUpdateToggle.current = true, 200);
+        });
+
   }
 
   if (state.status) {

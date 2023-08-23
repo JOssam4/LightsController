@@ -19,8 +19,7 @@ export default function DevicePicker(props: Props) {
 
     useEffect(() => {
         if (state.devices === undefined) {
-            console.log(`fetch('http://localhost:3001/devices')`);
-            fetch('http://localhost:3001/devices')
+            fetch('/devices')
                 .then((resp: Response) => resp.json())
                 .then((devices: DevicesResponse) => {
                     const hueDevices: DeviceType[] = devices.hue;
