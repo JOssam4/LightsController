@@ -4,7 +4,7 @@ import { Mode } from './ModePicker';
 import InputField from './InputField';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
-import { BrightnessLow, BrightnessHigh } from '@mui/icons-material';
+import { BrightnessLow, BrightnessHigh, AcUnit, LocalFireDepartment } from '@mui/icons-material';
 
 
 interface Props {
@@ -13,17 +13,24 @@ interface Props {
   mode: Mode;
   initialWhiteBrightness: number;
   overrideMode: () => void;
+  initialWarmth: number | undefined | null;
 }
 
 export default function Picker(props: Props) {
   const [color, setColor] = useState<HsvColor>(props.initialColor);
   const [whiteBrightness, setWhiteBrightness] = useState<number>(props.initialWhiteBrightness);
+  const [warmth, setWarmth] = useState<number | undefined | null>(props.initialWarmth);
   const canUpdateColors = useRef(true);
   const canUpdateBrightness = useRef(true);
+  const canUpdateWarmth = useRef(true);
 
   useEffect(() => {
     setColor(props.initialColor);
   }, [props.initialColor]);
+
+  useEffect(() => {
+    setWarmth(props.initialWarmth);
+  }, [props.initialWarmth]);
 
   function updateLights(color: HsvColor) {
     if (!canUpdateColors.current) {
@@ -87,6 +94,32 @@ export default function Picker(props: Props) {
         .finally(() => setTimeout(() => canUpdateBrightness.current = true, 200));
   }
 
+  function updateWarmth(event: Event, newVal: number | number[]) {
+    if (!canUpdateWarmth.current) {
+      return;
+    }
+    canUpdateWarmth.current = false;
+    const warmth = (typeof newVal === 'number') ? newVal : newVal[newVal.length - 1];
+    setWarmth(warmth);
+    fetch(`/warmth?device=${Array.from(props.controlledDevices)}`, {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({warmth}),
+    })
+      .then((response) => {
+        if (!response.ok && response.status !== 429) {
+          console.log(`error code: ${response.status}`);
+          console.error(response.statusText);
+        } else if (!response.ok && response.status === 429) {
+          console.log('too many requests');
+        }
+      })
+      .finally(() => setTimeout(()=> canUpdateWarmth.current = true, 200));
+  }
+
   const brightnessSlider = (props.mode === Mode.COLOR) ? (
     <Slider value={color.v}
                   aria-label="Brightness Slider"
@@ -102,6 +135,15 @@ export default function Picker(props: Props) {
                   onChange={(event, newVal: number | number[]) => updateBrightness(event, newVal)}
     />
   )
+
+  const warmthSlider = (warmth !== null && warmth !== undefined && 0 <= warmth && warmth <= 100)
+    ? <Slider value={warmth!}
+              aria-label="Warmth Slider"
+              min={0} max={100}
+              valueLabelDisplay="on"
+              onChange={(event, newVal: number | number[]) => updateWarmth(event, newVal)}
+    />
+    : null;
 
   if (props.initialColor) {
     return (
@@ -119,6 +161,14 @@ export default function Picker(props: Props) {
           {brightnessSlider}
           <BrightnessHigh style={{color: 'white'}} />
         </Stack>
+        <br />
+        {(warmth || warmth === 0) &&
+          <Stack spacing={2} direction="row" alignItems="center">
+            <AcUnit style={{color: 'white'}}/>
+            {warmthSlider}
+            <LocalFireDepartment style={{color: 'white'}} />
+          </Stack>
+        }
         <br />
         <br />
         <InputField color={color} handleChange={(hsv: HsvColor) => updateLights(hsv)} />

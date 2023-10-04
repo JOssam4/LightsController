@@ -10,6 +10,7 @@ interface LightState {
   brightness: number;
   toggle: boolean;
   sceneBrightness: number;
+  temperature: number | undefined;
 }
 
 interface Props {
@@ -22,6 +23,7 @@ interface State {
   color: HsvColor | null;
   brightness: number | null;
   sceneBrightness: number | null;
+  warmth: number | undefined | null;
 }
 
 export default function Controller(props: Props) {
@@ -29,32 +31,50 @@ export default function Controller(props: Props) {
     toggle: null,
     mode: null,
     color: null,
-    // brightness = white light brightness/hue warmth. HSV stores its own brightness value.
+    // brightness = white light brightness. HSV stores its own brightness value.
     brightness: null,
     sceneBrightness: null,
+    warmth: null
   });
 
   useEffect(() => {
-    const promises: Promise<void>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
-      return fetch(`/state?device=${deviceId}`)
+    const promises: Promise<LightState>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
+      return new Promise((resolve, reject) => {
+        fetch(`/state?device=${deviceId}`)
           .then((resp: Response) => {
             if (resp.ok) {
-              return resp.json();
+              resolve(resp.json());
             } else {
-              console.error(resp.text());
+              reject(resp.text());
             }
           })
-          .then((respjson: LightState) => setState({
-            toggle: respjson.toggle,
-            mode: respjson.mode,
-            brightness: respjson.brightness,
-            color: respjson.color,
-            sceneBrightness: respjson?.sceneBrightness,
-          }))
-          .catch((err) => console.error(err));
+      });
     });
     Promise.all(promises)
-        .then(() => console.log('Done getting light states in Controller.tsx'));
+        .then((values: LightState[]) => {
+          const combinedState: LightState = values.reduce((val1: LightState, val2: LightState) => {
+            console.dir(val1);
+            console.dir(val2);
+            const allKeys: Set<string> = new Set(Object.keys(val1).concat(Object.keys(val2)));
+            const keysInVal2NotInVal1 = Array.from(allKeys).filter(key => !Object.keys(val1).includes(key));
+            keysInVal2NotInVal1.forEach(key => {
+              // @ts-ignore
+              val1[key] = val2[key];
+            });
+            return val1;
+          });
+          console.log('combinedState:');
+          console.dir(combinedState);
+          setState({
+            toggle: combinedState.toggle,
+            mode: combinedState.mode,
+            brightness: combinedState.brightness,
+            color: combinedState.color,
+            sceneBrightness: combinedState.sceneBrightness,
+            warmth: combinedState?.temperature
+          });
+          console.log('Done getting light states in Controller.tsx')
+        });
   }, [props]);
 
   if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null && state.sceneBrightness !== null) {
@@ -62,7 +82,7 @@ export default function Controller(props: Props) {
       <div id="controller">
         <Toggle controlledDevices={props.controlledDevices} status={state.toggle} />
         <ModePicker controlledDevices={props.controlledDevices} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-        <Picker controlledDevices={props.controlledDevices} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
+        <Picker controlledDevices={props.controlledDevices} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} initialWarmth={state.warmth} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
       </div>
     );
   } else {
