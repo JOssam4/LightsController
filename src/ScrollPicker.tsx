@@ -321,7 +321,6 @@ function ScrollPicker(props: Props) {
   });
   return (
     <div
-      className="rdp-column-container"
       onTouchMove={moveHandler}
       onTouchStart={startHandler}
       onTouchEnd={endHandler}
@@ -336,12 +335,6 @@ function ScrollPicker(props: Props) {
       <div className="rdp-masked-div">
         <hr className="rdp-reticule" style={{ top: cellHeight - 1 }} />
         <hr className="rdp-reticule" style={{ top: cellHeight * 2 - 1 }} />
-        {/*
-        <div className="rdp-text-overlay" style={{ top: cellHeight }}>
-          {/ * @ts-ignore * /}
-          {`${toTwoDigitString(currentSelectionRef.current)}`}
-        </div>
-          */}
         <div
           className="rdp-column"
           style={{ top: offsetState.offset || 0 }}
