@@ -64,17 +64,17 @@ export default function TimePicker(props: Props) {
       <div className="scrollpicker-columns-wrapper">
         <span className="scrollpicker-wrapper">
         <Typography variant="body1" className="scrollpicker-label">Hours</Typography>
-        <ScrollPicker onChange={onChangeHours} unit="hours" cellHeight={35} initial={hours.current} maxHours={23}
+        <ScrollPicker onChange={onChangeHours} unit="hours" cellHeight={35} initial={0} maxHours={23}
                       isSmallScreen={false}/>
         </span>
           <span className="scrollpicker-wrapper">
           <Typography variant="body1" className="scrollpicker-label">Minutes</Typography>
-          <ScrollPicker onChange={onChangeMinutes} unit="mins" cellHeight={35} initial={minutes.current}
+          <ScrollPicker onChange={onChangeMinutes} unit="mins" cellHeight={35} initial={0}
                         isSmallScreen={false}/>
         </span>
           <span className="scrollpicker-wrapper">
           <Typography variant="body1" className="scrollpicker-label">Seconds</Typography>
-          <ScrollPicker onChange={onChangeSeconds} unit="secs" cellHeight={35} initial={seconds.current}
+          <ScrollPicker onChange={onChangeSeconds} unit="secs" cellHeight={35} initial={0}
                         isSmallScreen={false}/>
         </span>
       </div>
