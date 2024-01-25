@@ -240,10 +240,8 @@ function ScrollPicker(props: Props) {
       offsetState.offset,
       offsetState.cellContents
     );
-    console.log(`currentSelection: ${currentSelection}, currentSelectionRef.current: ${currentSelectionRef.current}`);
     if (currentSelectionRef.current !== currentSelection) {
       currentSelectionRef.current = currentSelection;
-      console.log(`calling onChange(${currentSelection})`);
       onChange(currentSelection);
     }
   }, [getCurrentSelection, handleShuffleColumn, offsetState, onChange]);
