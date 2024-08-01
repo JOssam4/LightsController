@@ -38,19 +38,33 @@ export default function Controller(props: Props) {
   });
 
   useEffect(() => {
-    const promises: Promise<LightState>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
-      return new Promise((resolve, reject) => {
-        fetch(`/state?device=${deviceId}`)
-          .then((resp: Response) => {
-            if (resp.ok) {
-              resolve(resp.json());
-            } else {
-              reject(resp.text());
-            }
-          })
+    if (props.controlledDevices.size === 0) {
+      setState({
+        toggle: null,
+        mode: null,
+        white: null,
+        color: null,
+        sceneBrightness: null,
+        warmth: null,
       });
-    });
-    Promise.all(promises)
+    }
+  }, [props]);
+
+  useEffect(() => {
+    if (props.controlledDevices.size > 0) {
+      const promises: Promise<LightState>[] = Array.from(props.controlledDevices).map((deviceId: string) => {
+        return new Promise((resolve, reject) => {
+          fetch(`/state?device=${deviceId}`)
+            .then((resp: Response) => {
+              if (resp.ok) {
+                resolve(resp.json());
+              } else {
+                reject(resp.text());
+              }
+            })
+        });
+      });
+      Promise.all(promises)
         .then((values: LightState[]) => {
           const combinedState: LightState = values.reduce((val1: LightState, val2: LightState) => {
             console.dir(val1);
@@ -75,6 +89,7 @@ export default function Controller(props: Props) {
           });
           console.log('Done getting light states in Controller.tsx')
         });
+    }
   }, [props]);
 
   if (state.toggle !== null && state.mode !== null && state.color && state.white !== null && state.sceneBrightness !== null) {
