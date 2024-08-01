@@ -18,7 +18,15 @@ interface Props {
 
 export default function Picker(props: Props) {
   const [color, setColor] = useState<HsvColor>(props.initialColor);
-  const [whiteBrightness, setWhiteBrightness] = useState<number>(props.initialWhiteBrightness);
+  const [whiteBrightness, setWhiteBrightness] = useState<number>(() => {
+    if (props.initialWhiteBrightness) {
+      return props.initialWhiteBrightness;
+    } else if (props.initialColor) {
+      return props.initialColor.v;
+    } else {
+      return 0;
+    }
+  });
   const [warmth, setWarmth] = useState<number | undefined | null>(props.initialWarmth);
   const canUpdateColors = useRef(true);
   const canUpdateBrightness = useRef(true);

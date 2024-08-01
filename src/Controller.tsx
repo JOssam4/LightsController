@@ -7,7 +7,7 @@ import Toggle from './Toggle';
 interface LightState {
   color: HsvColor;
   mode: Mode;
-  brightness: number;
+  white: number;
   toggle: boolean;
   sceneBrightness: number;
   temperature: number | undefined;
@@ -21,7 +21,7 @@ interface State {
   toggle: boolean | null;
   mode: Mode | null;
   color: HsvColor | null;
-  brightness: number | null;
+  white: number | null;
   sceneBrightness: number | null;
   warmth: number | undefined | null;
 }
@@ -31,8 +31,8 @@ export default function Controller(props: Props) {
     toggle: null,
     mode: null,
     color: null,
-    // brightness = white light brightness. HSV stores its own brightness value.
-    brightness: null,
+    // white = white light brightness. HSV stores its own brightness value.
+    white: null,
     sceneBrightness: null,
     warmth: null
   });
@@ -68,7 +68,7 @@ export default function Controller(props: Props) {
           setState({
             toggle: combinedState.toggle,
             mode: combinedState.mode,
-            brightness: combinedState.brightness,
+            white: combinedState.white,
             color: combinedState.color,
             sceneBrightness: combinedState.sceneBrightness,
             warmth: combinedState?.temperature
@@ -77,12 +77,12 @@ export default function Controller(props: Props) {
         });
   }, [props]);
 
-  if (state.toggle !== null && state.mode !== null && state.color && state.brightness !== null && state.sceneBrightness !== null) {
+  if (state.toggle !== null && state.mode !== null && state.color && state.white !== null && state.sceneBrightness !== null) {
     return (
       <div id="controller">
         <Toggle controlledDevices={props.controlledDevices} status={state.toggle} />
         <ModePicker controlledDevices={props.controlledDevices} initialMode={state.mode} setMode={(mode: Mode) => setState({ ...state, mode })} />
-        <Picker controlledDevices={props.controlledDevices} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.brightness} initialWarmth={state.warmth} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
+        <Picker controlledDevices={props.controlledDevices} initialColor={state.color} mode={state.mode} initialWhiteBrightness={state.white} initialWarmth={state.warmth} overrideMode={() => setState({ ...state, mode: Mode.COLOR})} />
       </div>
     );
   } else {
